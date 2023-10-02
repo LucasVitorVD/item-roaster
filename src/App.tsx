@@ -1,6 +1,11 @@
+import { Button } from "./components/ui/button"
+
 const App = () => {
   return (
-    <div>Hello World</div>
+    <div>
+      <h1>Hello</h1>
+      <Button>Click</Button>
+    </div>
   )
 }
 
