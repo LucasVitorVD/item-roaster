@@ -12,7 +12,10 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        'sm': '375px',
+        'md': '1024px',
+        'lg': '1440px',
+        'xl': '1680px',
       },
     },
     extend: {
@@ -22,6 +25,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        primaryBlue: "#4FA1C1",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
