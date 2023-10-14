@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar/Sidebar";
 import { Menu } from "lucide-react";
 import HeaderCard from "./components/Header/HeaderCard";
 import { Button } from "./components/ui/button";
-import FormCard from "./components/Cards/FormCard";
+import EmployeeManagementCard from "./components/Cards/EmployeeManagementCard";
 import InfoCard from "./components/Cards/InfoCard";
 
 const App = () => {
@@ -30,7 +30,7 @@ const App = () => {
 
         <section className="flex flex-col gap-5 mt-8 min-h-[30.25rem] lg:flex-row">
           <InfoCard />
-          <FormCard />
+          <EmployeeManagementCard />
         </section>
 
         <div className="flex justify-end mt-5">
