@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -17,11 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -30,11 +23,12 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarIcon, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 
 const EmployeeForm = () => {
   const cpfRegex = /^([0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2})$/;
+  const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+  const rgRegex = /^\d{7,8}(-\d{1})?$/;
 
   const formSchema = z.object({
     isActive: z.boolean().default(false).optional(),
@@ -60,13 +54,19 @@ const EmployeeForm = () => {
       .string({ required_error: "Campo obrigatório!" })
       .trim()
       .regex(cpfRegex, "CPF inválido!"),
-    rg: z.string({ required_error: "Campo obrigatório!" }).max(10).trim(),
+    rg: z
+      .string({ required_error: "Campo obrigatório!" })
+      .trim()
+      .regex(rgRegex, "RG inválido!")
+      .max(9, { message: "RG inválido!" }),
     gender: z.enum(["M", "F"], {
       required_error: "Campo obrigatório!",
     }),
-    birthDate: z.date({
-      required_error: "Campo obrigatório!",
-    }),
+    birthDate: z
+      .string({
+        required_error: "Campo obrigatório!",
+      })
+      .regex(dateRegex, "Data inválida!"),
     position: z.string({
       required_error: "Campo obrigatório!",
     }),
@@ -82,12 +82,16 @@ const EmployeeForm = () => {
         ),
       })
     ),
+    employeeFile: z.any().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      cpf: "",
+      rg: "",
+      birthDate: "",
       isActive: false,
       hasEpi: false,
       employeeEpis: [
@@ -171,7 +175,7 @@ const EmployeeForm = () => {
                     <FormItem>
                       <FormLabel>CPF:</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input type="text" mask="999.999.999-99" autoComplete="false" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -184,7 +188,7 @@ const EmployeeForm = () => {
                     <FormItem>
                       <FormLabel>RG:</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input type="text" autoComplete="false" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -233,38 +237,12 @@ const EmployeeForm = () => {
                     <FormItem className="flex flex-col gap-2">
                       <FormLabel>Data de Nascimento:</FormLabel>
                       <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <Input
+                          type="text"
+                          mask="99/99/9999"
+                          placeholder="dd/mm/aaaa"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -398,16 +376,13 @@ const EmployeeForm = () => {
                                       Informe o número do CA:
                                     </FormLabel>
                                     <FormControl>
-                                      <Input type="number" {...field} />
+                                      <Input type="number" min={0} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-                              <button
-                                type="button"
-                                className="text-sm mt-8"
-                              >
+                              <button type="button" className="text-sm mt-8">
                                 Adicionar EPI
                               </button>
                               {employeeEpisArr[index].epis.length >= 2 && (
@@ -448,7 +423,34 @@ const EmployeeForm = () => {
               </CardFooter>
             )}
           </Card>
-          <Button type="submit">Submit</Button>
+
+          <Card>
+            <CardContent className="border border-primaryBlue p-3 rounded-md">
+              <FormField
+                control={form.control}
+                name="employeeFile"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Adicione Atestado de Saúde Ocupacional (opcional):
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        placeholder="Selecionar arquivo"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+          <Button type="submit" variant={"outline"} className="w-full">
+            Salvar
+          </Button>
         </form>
       </Form>
     </ScrollArea>
