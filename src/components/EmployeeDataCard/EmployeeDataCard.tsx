@@ -1,13 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EmployeeForm from "../Form/Form";
 
 const EmployeeDataCard = () => {
   return (
@@ -29,13 +31,29 @@ const EmployeeDataCard = () => {
             ...
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you sure absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
+            <Tabs defaultValue="edit" className="w-full">
+              <TabsList className="w-full justify-around">
+                <TabsTrigger value="edit">Editar</TabsTrigger>
+                <TabsTrigger value="delete">Excluir</TabsTrigger>
+              </TabsList>
+              <TabsContent value="edit">
+                <EmployeeForm />
+              </TabsContent>
+              <TabsContent value="delete">
+                <div className="flex flex-col gap-6">
+                  <div>
+                    <p className="text-lg font-bold">Excluir Funcionário</p>
+                    <p className="text-muted-foreground">Tem certeza de que deseja excluir este funcionário? Esta ação é irreversível e removerá permanentemente os dados associados a este funcionário do sistema.</p>
+                  </div>
+                  <Button type="button" variant={"destructive"} className="self-end">Excluir</Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+            <DialogFooter className="sm:justify-start">
+              <DialogClose asChild>
+                <Button type="button" variant={"secondary"}>Fechar</Button>
+              </DialogClose>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </CardContent>

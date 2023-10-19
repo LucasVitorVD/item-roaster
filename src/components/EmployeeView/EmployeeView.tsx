@@ -2,12 +2,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import EmployeeDataCard from "../EmployeeDataCard/EmployeeDataCard";
+import type { RootState } from "@/app/store";
+import { useSelector, useDispatch } from "react-redux"
+import { updateItemStatus } from "@/features/item/itemSlice";
 
-const EmployeeView = () => {
+interface Props {
+  setToggleComponent: React.Dispatch<"view" | "form">
+}
+
+const EmployeeView = ({ setToggleComponent }: Props) => {
+  const currentItem = useSelector((state: RootState) => state.item.currentItem)
+  const headerItem = useSelector((state: RootState) => state.item.headerItems).find(item => item.item === currentItem)
+  const dispatch = useDispatch()
+
   return (
     <>
       <div className="flex flex-col gap-5">
-        <Button variant={"filter"} className="w-full py-8">
+        <Button variant={"filter"} className="w-full py-8" onClick={() => setToggleComponent("form")}>
           + Adicionar
         </Button>
 
@@ -33,7 +44,7 @@ const EmployeeView = () => {
 
       <div className="flex justify-end items-center gap-5">
         <p className="text-sm">A etapa está concluída?</p>
-        <Switch />
+        <Switch onClick={() => dispatch(updateItemStatus(!headerItem?.isDone))} checked={headerItem?.isDone ?? false} />
       </div>
     </>
   );

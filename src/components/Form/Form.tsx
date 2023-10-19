@@ -340,7 +340,7 @@ const EmployeeForm = () => {
                           {field.epis.map((epi, epiIndex) => (
                             <div
                               key={epiIndex}
-                              className="flex items-center gap-5 mt-5"
+                              className="flex flex-wrap items-center gap-5 mt-5"
                             >
                               <FormField
                                 control={form.control}

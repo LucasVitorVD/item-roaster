@@ -5,9 +5,14 @@ import HeaderCard from "./components/Header/HeaderCard";
 import { Button } from "./components/ui/button";
 import EmployeeManagementCard from "./components/Cards/EmployeeManagementCard";
 import InfoCard from "./components/Cards/InfoCard";
+import type { RootState } from "@/app/store";
+import { useSelector, useDispatch } from "react-redux"
+import { setCurrentItem } from "./features/item/itemSlice";
 
 const App = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
+  const currentItem = useSelector((state: RootState) => state.item.currentItem)
+  const dispatch = useDispatch()
 
   return (
     <div className="flex min-h-screen relative">
@@ -34,7 +39,7 @@ const App = () => {
         </section>
 
         <div className="flex justify-end mt-5">
-          <Button className="bg-primaryBlue w-48 text-sm font-bold hover:bg-blue-400">
+          <Button onClick={() => dispatch(setCurrentItem(currentItem + 1))} className="bg-primaryBlue w-48 text-sm font-bold hover:bg-blue-400">
             Próximo passo
           </Button>
         </div>
