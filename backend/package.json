@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.4.2",
-    "fastify": "^4.24.3"
+    "fastify": "^4.24.3",
+    "zod": "^3.22.4"
   }
 }

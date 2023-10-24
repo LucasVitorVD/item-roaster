@@ -5,8 +5,8 @@ import HeaderCard from "./components/Header/HeaderCard";
 import { Button } from "./components/ui/button";
 import EmployeeManagementCard from "./components/Cards/EmployeeManagementCard";
 import InfoCard from "./components/Cards/InfoCard";
-import type { RootState } from "@/app/store";
-import { useSelector, useDispatch } from "react-redux"
+import type { RootState } from "./app/store";
+import { useSelector, useDispatch } from "react-redux";
 import { setCurrentItem } from "./features/item/itemSlice";
 
 const App = () => {

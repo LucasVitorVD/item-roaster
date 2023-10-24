@@ -20,10 +20,11 @@ model Epis {
 }
 
 model EmployeeEpis {
-  id            Int              @id @default(autoincrement())
-  activity      String
-  epis          Epis[]
-  employee_data Employees_data[]
+  id               Int             @id @default(autoincrement())
+  activity         String
+  epis             Epis[]
+  Employees_data   Employees_data? @relation(fields: [employees_dataId], references: [id])
+  employees_dataId Int?
 }
 
 model Employees_data {
