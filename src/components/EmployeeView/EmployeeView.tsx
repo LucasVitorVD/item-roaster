@@ -2,11 +2,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import EmployeeDataCard from "../EmployeeDataCard/EmployeeDataCard";
-import EmptyContent from "../EmptyContent/EmptyContent";
 import type { RootState } from "@/app/store";
 import { useSelector, useDispatch } from "react-redux"
 import { updateItemStatus } from "@/features/item/itemSlice";
-import { useGetEmployeesByCurrentItemQuery } from "@/features/employee/employeeSlice";
 
 interface Props {
   setToggleComponent: React.Dispatch<"view" | "form">
@@ -16,12 +14,6 @@ const EmployeeView = ({ setToggleComponent }: Props) => {
   const currentItem = useSelector((state: RootState) => state.item.currentItem)
   const headerItem = useSelector((state: RootState) => state.item.headerItems).find(item => item.item === currentItem)
   const dispatch = useDispatch()
-
-  const { 
-    data: employees,
-    isLoading,
-    isError,
-  } = useGetEmployeesByCurrentItemQuery(currentItem)
 
   return (
     <>
@@ -45,21 +37,9 @@ const EmployeeView = ({ setToggleComponent }: Props) => {
       </div>
 
       <ScrollArea className="flex flex-col h-[12rem]">
-        {isLoading && <p>Loading...</p>}
+        <EmployeeDataCard />
 
-        {!isError && employees && employees.length > 0 ? (
-          employees.map(employee => (
-            <EmployeeDataCard 
-              key={employee.id}
-              name={employee.employeeName}
-              rg={employee.rg}
-              position={employee.position}
-              activity={employee.employeeEpis[0]?.activity} 
-            />
-          ))
-        ) : (
-          <EmptyContent message="Sem usuários..." />
-        )}
+        {/* <EmptyContent message="Sem usuários..." /> */}
       </ScrollArea>
 
       <div className="flex justify-end items-center gap-5">

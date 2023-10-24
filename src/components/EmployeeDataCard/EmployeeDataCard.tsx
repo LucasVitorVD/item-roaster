@@ -11,25 +11,18 @@ import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmployeeForm from "../Form/Form";
 
-interface Props {
-  name: string,
-  rg: string,
-  activity?: string,
-  position: string
-}
-
-const EmployeeDataCard = ({ name, rg, activity, position }: Props) => {
+const EmployeeDataCard = () => {
   return (
     <Card className="h-[104px] mb-6">
       <CardContent className="flex px-0 py-0 h-full overflow-auto">
         <div className="flex-1 py-2 pl-5">
           <p className="text-2xl text-muted-foreground font-normal mb-3">
-            {name}
+            Lucas
           </p>
           <div className="space-x-5">
-            <Badge variant="info">{rg}</Badge>
-            <Badge variant="info">{activity ?? "Sem atividades"}</Badge>
-            <Badge variant="info">{position}</Badge>
+            <Badge variant="info">03848320</Badge>
+            <Badge variant="info">Sem atividades</Badge>
+            <Badge variant="info">Junior</Badge>
           </div>
         </div>
 

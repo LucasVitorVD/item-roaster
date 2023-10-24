@@ -1,20 +1,18 @@
+// Import the framework and instantiate it
 import Fastify from 'fastify'
-
 const fastify = Fastify({
   logger: true
 })
 
-fastify.get('/health', async () => {
+// Declare a route
+fastify.get('/', async function handler (request, reply) {
   return { hello: 'world' }
 })
 
-async function main() {
-  fastify.listen({ port: 3000 }, (err) => {
-    if (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
-  })
-}
-
-main()
+// Run the server!
+fastify.listen({ port: 3000 }, (err) => {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+})
