@@ -1,6 +1,10 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { formSchema, TFormSchema } from "@/schemas/formSchema";
+import type { RootState } from "@/app/store";
+import { useSelector, useDispatch } from "react-redux";
+import { setToggleComponent } from "@/features/item/itemSlice";
+import type { IEmployee } from "@/types/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
@@ -24,71 +28,18 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trash2 } from "lucide-react";
+import { useAddEmployeeMutation } from "@/features/employee/employee-api-slice";
 
 const EmployeeForm = () => {
-  const cpfRegex = /^([0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2})$/;
-  const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-  const rgRegex = /^\d{7,8}(-\d{1})?$/;
+  const currentItem = useSelector((state: RootState) => state.item.currentItem) 
+  const dispatch = useDispatch()
 
-  const formSchema = z.object({
-    isActive: z.boolean().default(false).optional(),
-    username: z
-      .string({
-        required_error: "Campo obrigatório",
-        invalid_type_error: "Números não são válidos!",
-      })
-      .min(2, {
-        message: "O nome precisa ter mais de 2 caracteres.",
-      })
-      .max(40, { message: "Limite máximo de caracteres atingido!" })
-      .transform((name) => {
-        return name
-          .trim()
-          .split(" ")
-          .map((word) => {
-            return word[0].toLocaleUpperCase().concat(word.substring(1));
-          })
-          .join(" ");
-      }),
-    cpf: z
-      .string({ required_error: "Campo obrigatório!" })
-      .trim()
-      .regex(cpfRegex, "CPF inválido!"),
-    rg: z
-      .string({ required_error: "Campo obrigatório!" })
-      .trim()
-      .regex(rgRegex, "RG inválido!")
-      .max(9, { message: "RG inválido!" }),
-    gender: z.enum(["M", "F"], {
-      required_error: "Campo obrigatório!",
-    }),
-    birthDate: z
-      .string({
-        required_error: "Campo obrigatório!",
-      })
-      .regex(dateRegex, "Data inválida!"),
-    position: z.string({
-      required_error: "Campo obrigatório!",
-    }),
-    hasEpi: z.boolean().default(false).optional(),
-    employeeEpis: z.array(
-      z.object({
-        activity: z.string({ required_error: "Campo obrigatório!" }),
-        epis: z.array(
-          z.object({
-            epi: z.string({ required_error: "Campo obrigatório!" }),
-            ca: z.coerce.number({ required_error: "Campo obrigatório!" }),
-          })
-        ),
-      })
-    ),
-    employeeFile: z.any().optional(),
-  });
+  const [ addEmployee ] = useAddEmployeeMutation()
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      employeeName: "",
       cpf: "",
       rg: "",
       birthDate: "",
@@ -122,9 +73,16 @@ const EmployeeForm = () => {
     append({ activity: "", epis: [{ epi: "", ca: 0 }] });
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    values.employeeEpis = hasEpiValue === true ? [] : values.employeeEpis;
-    console.log(values);
+  function onSubmit(data: TFormSchema) {
+    const employee: IEmployee = {
+      ...data,
+      employeeEpis: hasEpiValue ? [] : data.employeeEpis,
+      item: currentItem
+    }
+
+    addEmployee(employee)
+
+    dispatch(setToggleComponent("view"))
   }
 
   return (
@@ -157,7 +115,7 @@ const EmployeeForm = () => {
               <div className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="employeeName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome:</FormLabel>
@@ -448,6 +406,7 @@ const EmployeeForm = () => {
               />
             </CardContent>
           </Card>
+
           <Button type="submit" variant={"outline"} className="w-full">
             Salvar
           </Button>

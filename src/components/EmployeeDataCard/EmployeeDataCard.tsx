@@ -10,19 +10,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmployeeForm from "../Form/Form";
+import { useDeleteEmployeeMutation } from "@/features/employee/employee-api-slice";
 
-const EmployeeDataCard = () => {
+interface Props {
+  id: number
+  name: string
+  rg: string
+  activity: string | undefined
+  position: string
+}
+
+const EmployeeDataCard = ({ id, name, rg, activity, position }: Props) => {
+  const [deleteEmployee] = useDeleteEmployeeMutation()
+
   return (
     <Card className="h-[104px] mb-6">
       <CardContent className="flex px-0 py-0 h-full overflow-auto">
         <div className="flex-1 py-2 pl-5">
           <p className="text-2xl text-muted-foreground font-normal mb-3">
-            Lucas
+            {name}
           </p>
           <div className="space-x-5">
-            <Badge variant="info">03848320</Badge>
-            <Badge variant="info">Sem atividades</Badge>
-            <Badge variant="info">Junior</Badge>
+            <Badge variant="info">{rg}</Badge>
+            <Badge variant="info">{activity ?? "Sem atividades"}</Badge>
+            <Badge variant="info">{position}</Badge>
           </div>
         </div>
 
@@ -45,7 +56,7 @@ const EmployeeDataCard = () => {
                     <p className="text-lg font-bold">Excluir Funcionário</p>
                     <p className="text-muted-foreground">Tem certeza de que deseja excluir este funcionário? Esta ação é irreversível e removerá permanentemente os dados associados a este funcionário do sistema.</p>
                   </div>
-                  <Button type="button" variant={"destructive"} className="self-end">Excluir</Button>
+                  <Button type="button" onClick={() => deleteEmployee(id)} variant={"destructive"} className="self-end">Excluir</Button>
                 </div>
               </TabsContent>
             </Tabs>

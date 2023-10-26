@@ -2,9 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { IHeaderItems } from "@/types/types";
 
+type ToggleComponent = "view" | "form"
+
 export interface ItemState {
   headerItems: IHeaderItems[]
   currentItem: number
+  toggleComponent: ToggleComponent
 }
 
 const itemsFromLocalStorage = localStorage.getItem("items")
@@ -50,7 +53,8 @@ const initialHeaderItems: IHeaderItems[] = itemsFromLocalStorage ? JSON.parse(it
 
 const initialState: ItemState = {
   currentItem: 1,
-  headerItems: initialHeaderItems
+  headerItems: initialHeaderItems,
+  toggleComponent: "view"
 }
 
 export const itemSlice = createSlice({
@@ -69,10 +73,13 @@ export const itemSlice = createSlice({
         state.headerItems[itemIndex].isDone = action.payload
         localStorage.setItem("items", JSON.stringify(state.headerItems))
       }
+    },
+    setToggleComponent: (state, action: PayloadAction<ToggleComponent>) => {
+      state.toggleComponent = action.payload
     }
   }
 })
 
-export const { updateItemStatus, setCurrentItem } = itemSlice.actions
+export const { updateItemStatus, setCurrentItem, setToggleComponent } = itemSlice.actions
 
 export default itemSlice.reducer

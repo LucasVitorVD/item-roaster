@@ -1,11 +1,14 @@
-import { useState } from "react";
+import type { RootState } from "@/app/store";
+import { useSelector, useDispatch } from "react-redux";
+import { setToggleComponent } from "@/features/item/itemSlice";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import EmployeeView from "../EmployeeView/EmployeeView";
 import EmployeeForm from "../Form/Form";
 import { ArrowLeft } from "lucide-react";
 
 const EmployeeManagementCard = () => {
-  const [toggleComponent, setToggleComponent] = useState<"view" | "form">("view")
+  const toggleComponent = useSelector((state: RootState) => state.item.toggleComponent); 
+  const dispatch = useDispatch()
 
   return (
     <Card className="w-full h-full">
@@ -15,7 +18,7 @@ const EmployeeManagementCard = () => {
             <p>Funcionário(s)</p>
           ) : (
             <>
-              <ArrowLeft onClick={() => setToggleComponent("view")} cursor="pointer" />
+              <ArrowLeft onClick={() => dispatch(setToggleComponent("view"))} cursor="pointer" />
               <p>Adicionar Funcionário</p>
             </>
           )}
@@ -23,7 +26,7 @@ const EmployeeManagementCard = () => {
       </CardHeader>
       <CardContent className="flex flex-col gap-5 p-6">
         {toggleComponent === "view" ? (
-          <EmployeeView setToggleComponent={setToggleComponent} />
+          <EmployeeView />
         ) : (
           <EmployeeForm />
         )}
