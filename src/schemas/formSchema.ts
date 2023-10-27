@@ -48,12 +48,10 @@ export const formSchema = z.object({
   employeeEpis: z.array(
     z.object({
       activity: z.string({ required_error: "Campo obrigatório!" }),
-      epis: z.array(
-        z.object({
-          epi: z.string({ required_error: "Campo obrigatório!" }),
-          ca: z.coerce.number({ required_error: "Campo obrigatório!" }),
-        })
-      ),
+      epis: z.object({
+        epi: z.string({ required_error: "Campo obrigatório!" }),
+        ca: z.coerce.number({ required_error: "Campo obrigatório!" }),
+      }),
     })
   ),
   employeeFile: z.any().optional(),

@@ -18,11 +18,11 @@ export const employeeApiSlice = createApi({
       }),
       invalidatesTags: ['Employees'],
     }),
-    updateEmployee: builder.mutation({
-      query: (employee) => ({
-        url: `/employees/${employee.id}`,
+    updateEmployee: builder.mutation<null, { id: number, data: IEmployee }>({
+      query: ({ id, data }) => ({
+        url: `/employees/${id}`,
         method: "PATCH",
-        body: employee
+        body: data
       }),
       invalidatesTags: ['Employees'],
     }),

@@ -28,17 +28,26 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trash2 } from "lucide-react";
-import { useAddEmployeeMutation } from "@/features/employee/employee-api-slice";
+import {
+  useAddEmployeeMutation,
+  useUpdateEmployeeMutation,
+} from "@/features/employee/employee-api-slice";
 
-const EmployeeForm = () => {
-  const currentItem = useSelector((state: RootState) => state.item.currentItem) 
-  const dispatch = useDispatch()
+interface Props {
+  preloadedData?: IEmployee;
+  setOpenModal?: React.Dispatch<boolean>;
+}
 
-  const [ addEmployee ] = useAddEmployeeMutation()
+const EmployeeForm = ({ preloadedData, setOpenModal }: Props) => {
+  const currentItem = useSelector((state: RootState) => state.item.currentItem);
+  const dispatch = useDispatch();
+
+  const [addEmployee] = useAddEmployeeMutation();
+  const [updateEmployee] = useUpdateEmployeeMutation();
 
   const form = useForm<TFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: preloadedData ?? {
       employeeName: "",
       cpf: "",
       rg: "",
@@ -48,14 +57,13 @@ const EmployeeForm = () => {
       employeeEpis: [
         {
           activity: "",
-          epis: [
-            {
-              epi: "",
-              ca: 0,
-            },
-          ],
+          epis: {
+            epi: "",
+            ca: 0,
+          },
         },
       ],
+      employeeFile: "",
     },
   });
 
@@ -70,19 +78,28 @@ const EmployeeForm = () => {
   const employeeEpisArr = watch("employeeEpis");
 
   function addNewField() {
-    append({ activity: "", epis: [{ epi: "", ca: 0 }] });
+    append({ activity: "", epis: { epi: "", ca: 0 } });
+  }
+
+  function handleModalClose() {
+    if (setOpenModal) setOpenModal(false);
   }
 
   function onSubmit(data: TFormSchema) {
     const employee: IEmployee = {
       ...data,
       employeeEpis: hasEpiValue ? [] : data.employeeEpis,
-      item: currentItem
+      item: currentItem,
+    };
+
+    if (preloadedData) {
+      updateEmployee({ id: preloadedData.id!, data: employee });
+      handleModalClose();
+      return;
+    } else {
+      addEmployee(employee);
+      dispatch(setToggleComponent("view"));
     }
-
-    addEmployee(employee)
-
-    dispatch(setToggleComponent("view"))
   }
 
   return (
@@ -133,7 +150,12 @@ const EmployeeForm = () => {
                     <FormItem>
                       <FormLabel>CPF:</FormLabel>
                       <FormControl>
-                        <Input type="text" mask="999.999.999-99" autoComplete="false" {...field} />
+                        <Input
+                          type="text"
+                          mask="999.999.999-99"
+                          autoComplete="off"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -146,7 +168,7 @@ const EmployeeForm = () => {
                     <FormItem>
                       <FormLabel>RG:</FormLabel>
                       <FormControl>
-                        <Input type="text" autoComplete="false" {...field} />
+                        <Input type="text" autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -295,64 +317,49 @@ const EmployeeForm = () => {
                               </FormItem>
                             )}
                           />
-                          {field.epis.map((epi, epiIndex) => (
-                            <div
-                              key={epiIndex}
-                              className="flex flex-wrap items-center gap-5 mt-5"
-                            >
-                              <FormField
-                                control={form.control}
-                                name={`employeeEpis.${index}.epis.${epiIndex}.epi`}
-                                render={({ field }) => (
-                                  <FormItem className="flex-1">
-                                    <FormLabel>Selecione o EPI:</FormLabel>
-                                    <Select onValueChange={field.onChange}>
-                                      <FormControl>
-                                        <SelectTrigger>
-                                          <SelectValue />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        <SelectItem value="calcado-seguranca">
-                                          Calçado de segurança
-                                        </SelectItem>
-                                        <SelectItem value="other">
-                                          Outro
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name={`employeeEpis.${index}.epis.${epiIndex}.ca`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>
-                                      Informe o número do CA:
-                                    </FormLabel>
+                          <div className="flex flex-wrap items-center gap-5 mt-5">
+                            <FormField
+                              control={form.control}
+                              name={`employeeEpis.${index}.epis.epi`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormLabel>Selecione o EPI:</FormLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
                                     <FormControl>
-                                      <Input type="number" min={0} {...field} />
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
                                     </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <button type="button" className="text-sm mt-8">
-                                Adicionar EPI
-                              </button>
-                              {employeeEpisArr[index].epis.length >= 2 && (
-                                <button
-                                  type="button"
-                                  className="mt-2 text-red-500 block"
-                                >
-                                  <Trash2 size={20} />
-                                </button>
+                                    <SelectContent>
+                                      <SelectItem value="calcado-seguranca">
+                                        Calçado de segurança
+                                      </SelectItem>
+                                      <SelectItem value="other">
+                                        Outro
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
                               )}
-                            </div>
-                          ))}
+                            />
+                            <FormField
+                              control={form.control}
+                              name={`employeeEpis.${index}.epis.ca`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Informe o número do CA:</FormLabel>
+                                  <FormControl>
+                                    <Input type="number" min={0} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </CardContent>
                       </Card>
                       {employeeEpisArr.length >= 2 && (
@@ -382,30 +389,31 @@ const EmployeeForm = () => {
             )}
           </Card>
 
-          <Card>
-            <CardContent className="border border-primaryBlue p-3 rounded-md">
-              <FormField
-                control={form.control}
-                name="employeeFile"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Adicione Atestado de Saúde Ocupacional (opcional):
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        placeholder="Selecionar arquivo"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+          {!preloadedData && (
+            <Card>
+              <CardContent className="border border-primaryBlue p-3 rounded-md">
+                <FormField
+                  control={form.control}
+                  name="employeeFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Adicione Atestado de Saúde Ocupacional (opcional):
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          placeholder="Selecionar arquivo"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <Button type="submit" variant={"outline"} className="w-full">
             Salvar
