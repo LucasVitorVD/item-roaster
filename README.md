@@ -27,7 +27,7 @@ Certifique-se de ter o [Node.js](https://nodejs.org/) instalado em seu sistema.
 - npm run server
 
 5. Inicie o aplicativo:
-- npm start
+- npm run preview
 
 ## Funcionalidades
 
