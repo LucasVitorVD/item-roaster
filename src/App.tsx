@@ -27,6 +27,7 @@ const App = () => {
           onClick={() => setToggleMenu(true)}
           size={30}
           className="text-primaryBlue mb-7 lg:hidden"
+          data-testid="lucide-menu-icon"
         />
 
         <section>

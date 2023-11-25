@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "json-server --watch db.json",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",

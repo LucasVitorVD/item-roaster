@@ -17,10 +17,10 @@ const HeaderCard = () => {
             key={item.item}
             className="flex flex-col items-center justify-center h-full cursor-pointer transition-all z-10"
             onClick={() => dispatch(setCurrentItem(item.item))}
+            role="headerItem"
           >
             <button
-              data-currentitem={currentItem === item.item}
-              className="rounded-3xl bg-primaryBlue p-2 my-2 data-[currentitem=true]:border data-[currentitem=true]:border-blue-800"
+              className={`rounded-3xl bg-primaryBlue p-2 my-2 ${currentItem === item.item ? "border border-blue-800" : ""}`}
             >
               <Hotel size={50} color="white" />
             </button>
