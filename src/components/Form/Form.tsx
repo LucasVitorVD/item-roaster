@@ -105,7 +105,7 @@ const EmployeeForm = ({ preloadedData, setOpenModal }: Props) => {
   return (
     <ScrollArea className="h-[450px]">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" role="employeeForm">
           <Card>
             <CardContent className="border border-primaryBlue p-3 rounded-md">
               <FormField
@@ -283,7 +283,7 @@ const EmployeeForm = ({ preloadedData, setOpenModal }: Props) => {
               {!hasEpiValue &&
                 fields.map((field, index) => {
                   return (
-                    <div key={field.id}>
+                    <div key={field.id} role="epiForm">
                       <Card>
                         <CardContent className="border border-primaryBlue p-3 rounded-md">
                           <FormField
@@ -367,6 +367,7 @@ const EmployeeForm = ({ preloadedData, setOpenModal }: Props) => {
                           type="button"
                           onClick={() => remove(index)}
                           className="mt-2 text-red-500"
+                          role="removeFieldButton"
                         >
                           <Trash2 size={20} />
                         </button>

@@ -6,6 +6,15 @@ import { Provider } from "react-redux"
 import type { AppDispatch, RootState } from "@/app/store"
 import { store } from "@/app/store"
 
+// Resize error when used fireEvent
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+window.ResizeObserver = ResizeObserver;
+
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: PreloadedState<RootState>
   store?: AppDispatch
