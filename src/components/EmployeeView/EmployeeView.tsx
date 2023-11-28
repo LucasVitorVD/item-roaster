@@ -85,6 +85,7 @@ const EmployeeView = () => {
         <Switch
           onClick={() => dispatch(updateItemStatus(!headerItem?.isDone))}
           checked={headerItem?.isDone ?? false}
+          role="checkStep"
         />
       </div>
     </>

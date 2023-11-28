@@ -24,7 +24,7 @@ const EmployeeDataCard = ({ employeeData }: Props) => {
   const [deleteEmployee] = useDeleteEmployeeMutation()
 
   return (
-    <Card className="h-[104px] mb-6">
+    <Card className="h-[104px] mb-6" role="employeeData">
       <CardContent className="flex px-0 py-0 h-full overflow-auto">
         <div className="flex-1 py-2 pl-5">
           <p className="text-2xl text-muted-foreground font-normal mb-3">

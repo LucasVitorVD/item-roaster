@@ -29,7 +29,7 @@ const HeaderCard = () => {
                 ITEM {item.item}
               </span>
               {item.isDone && (
-                <span className="text-primaryBlue text-[.7rem] font-medium">
+                <span className="text-primaryBlue text-[.7rem] font-medium" id="finishedStepMessage">
                   CONCLUÍDO
                 </span>
               )}

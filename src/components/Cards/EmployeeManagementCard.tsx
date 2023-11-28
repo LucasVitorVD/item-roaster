@@ -11,7 +11,7 @@ const EmployeeManagementCard = () => {
   const dispatch = useDispatch()
 
   return (
-    <Card className="w-full h-full">
+    <Card className="w-full h-full" role="managementCard">
       <CardHeader className="bg-primaryBlue py-3 rounded-t-sm">
         <CardTitle className="flex items-center gap-4 text-xl text-card md:text-3xl">
           {toggleComponent === "view" ? (
