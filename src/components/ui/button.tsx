@@ -19,7 +19,9 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        filter: "bg-card border border-primaryBlue text-primaryBlue text-sm hover:border-blue-400 hover:text-blue-400"
+        filter: "bg-card border border-primaryBlue text-primaryBlue text-sm hover:border-blue-400 hover:text-blue-400",
+        google: "bg-white text-secondary-foreground shadow-sm space-x-2",
+        facebook: "bg-blue-700 text-primary-foreground shadow-sm space-x-1"
       },
       size: {
         default: "h-9 px-4 py-2",
