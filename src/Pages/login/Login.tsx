@@ -45,10 +45,6 @@ const Login = () => {
 
       navigate("/")
     } catch (error) {
-      if (error.response === 422) {
-        console.log(error)
-      }
-      
       console.log(error)
     }
   }
