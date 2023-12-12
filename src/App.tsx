@@ -1,49 +1,45 @@
-import { useState } from "react";
 import Sidebar from "@/components/Sidebar/Sidebar";
-import { Menu } from "lucide-react";
-import HeaderCard from "./components/Header/HeaderCard";
-import { Button } from "./components/ui/button";
-import EmployeeManagementCard from "./components/Cards/EmployeeManagementCard";
-import InfoCard from "./components/Cards/InfoCard";
+import { Outlet, useNavigate } from "react-router";
 import type { RootState } from "@/app/store";
-import { useSelector, useDispatch } from "react-redux"
-import { setCurrentItem } from "./features/item/itemSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { setToggleMenu } from "@/features/sidebar/sidebarSlice";
+import { Menu } from "lucide-react";
+import { useEffect } from "react";
 
 const App = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const currentItem = useSelector((state: RootState) => state.item.currentItem)
-  const dispatch = useDispatch()
+  const toggleMenu = useSelector(
+    (state: RootState) => state.sidebar.toggleMenu
+  );
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+
+  useEffect(() => {
+    function isLogged() {
+      if (!localStorage.getItem('token')) {
+        navigate("/login")
+      }
+    }
+
+    isLogged()
+  }, [token])
 
   return (
     <div className="flex min-h-screen relative">
-      <Sidebar toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
-
+      <Sidebar />
       <main
         className={`flex flex-col flex-1 p-5 transition-all ease-in-out max-w-full md:p-10 ${
           toggleMenu ? "blur-sm" : "filter-none"
         } lg:filter-none`}
       >
         <Menu
-          onClick={() => setToggleMenu(true)}
+          onClick={() => dispatch(setToggleMenu(true))}
           size={30}
-          className="text-primaryBlue mb-7 lg:hidden"
+          className={`text-primaryBlue mb-7 ${!token ? 'hidden' : 'visible'} lg:hidden`}
           data-testid="lucide-menu-icon"
         />
 
-        <section>
-          <HeaderCard />
-        </section>
-
-        <section className="flex flex-col gap-5 mt-8 min-h-[30.25rem] lg:flex-row">
-          <InfoCard />
-          <EmployeeManagementCard />
-        </section>
-
-        <div className="flex justify-end mt-5">
-          <Button onClick={() => dispatch(setCurrentItem(currentItem + 1))} className="bg-primaryBlue w-48 text-sm font-bold hover:bg-blue-400">
-            Próximo passo
-          </Button>
-        </div>
+        <Outlet />
       </main>
     </div>
   );
